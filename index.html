@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Parently – Child Safety QR Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #e1d6de;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: rgb(199, 54, 151);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #3c3c3c;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0 20px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #qrcode {
+      margin: 20px auto;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="loginSection">
+    <h1 style="color: black;">Parently Login</h1>
+    <input type="email" id="userEmail" placeholder="Enter your email" required />
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div class="container hidden" id="formSection">
+    <h1>Enter Child & Parent Info</h1>
+    <input type="text" id="parentName" placeholder="Parent's Name" required />
+    <input type="text" id="phone" placeholder="Phone Number" required />
+    <input type="text" id="address" placeholder="Address" required />
+    <input type="text" id="state" placeholder="State" required />
+    <input type="text" id="district" placeholder="District" required />
+    <input type="text" id="childName" placeholder="Child's Name" required />
+    <input type="number" id="age" placeholder="Child's Age" required />
+    <button onclick="generateQRCode()">Generate QR Code</button>
+    <button onclick="clearForm()">Clear</button>
+    <div id="qrcode"></div>
+    <button class="hidden" id="downloadBtn" onclick="downloadQRCode()">Download QR Code</button>
+  </div>
+
+  <script>
+    function login() {
+      const email = document.getElementById("userEmail").value.trim();
+      if (!email) {
+        alert("Please enter your email.");
+        return;
+      }
+      document.getElementById("loginSection").classList.add("hidden");
+      document.getElementById("formSection").classList.remove("hidden");
+    }
+
+    function generateQRCode() {
+      const parentName = document.getElementById("parentName").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const state = document.getElementById("state").value.trim();
+      const district = document.getElementById("district").value.trim();
+      const childName = document.getElementById("childName").value.trim();
+      const age = document.getElementById("age").value.trim();
+
+      if (!parentName || !phone || !address || !state || !district || !childName || !age) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const data = `Parent Name: ${parentName}\nPhone: ${phone}\nAddress: ${address}\nState: ${state}\nDistrict: ${district}\nChild Name: ${childName}\nAge: ${age}`;
+      document.getElementById("qrcode").innerHTML = "";
+      new QRCode(document.getElementById("qrcode"), {
+        text: data,
+        width: 200,
+        height: 200,
+      });
+      document.getElementById("downloadBtn").classList.remove("hidden");
+    }
+
+    function clearForm() {
+      document.getElementById("formSection").reset();
+      document.getElementById("qrcode").innerHTML = "";
+      document.getElementById("downloadBtn").classList.add("hidden");
+    }
+
+    function downloadQRCode() {
+      const canvas = document.querySelector("#qrcode canvas");
+      if (!canvas) {
+        alert("Please generate the QR code first.");
+        return;
+      }
+      const image = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = "parently_qrcode.png";
+      link.click();
+    }
+  </script>
+
+</body>
+</html>
